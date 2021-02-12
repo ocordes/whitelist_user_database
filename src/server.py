@@ -18,7 +18,7 @@ from flask.cli import AppGroup
 
 # the defaults for the APP
 from app import create_app, db
-from app.models import User, WhitelistUser, WhitelistGroup
+from app.models import User, Whitelistuser, Whitelistgroup
 
 import logging
 
@@ -43,7 +43,8 @@ environment
 """
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User }
+    return {'db': db, 'User': User, 'Whitelistuser': Whitelistuser,
+        'Whitelistgroup': Whitelistgroup }
 
 
 """

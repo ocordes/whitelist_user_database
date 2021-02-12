@@ -98,25 +98,26 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-class WhitelistGroup(db.Model):
+
+class Whitelistgroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     groupname = db.Column(db.String(64), unique=True)
 
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<WhitelistGroup {}>'.format(self.groupname)
 
 
-class WhitelistUser(db.Model):
+class Whitelistuser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    #group_id = db.Column(db.Integer, db.ForeignKey('WhitelistGroup.id'))
+    username = db.Column(db.String(64), unique=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('whitelistgroup.id'))
     comment  = db.Column(db.String(64))
 
     is_active = db.Column(db.Boolean, default=True)
 
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
     def __repr__(self):
