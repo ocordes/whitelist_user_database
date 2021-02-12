@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block left_sidebar_extra_content %}
+
+<ul class="nav flex-column mb-2">
+  <li class="nav-item">
+    <a class="nav-link" href="/user/adduser">
+      <span data-feather="file-text"></span>
+      Add User
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/user/adduserlist">
+      <span data-feather="file-text"></span>
+      Upload User list
+    </a>
+  </li>
+</ul>
+{% endblock %}
+
+
+{% block app_content %}
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+
+{% endblock %}

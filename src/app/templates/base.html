@@ -1,0 +1,153 @@
+{% extends 'bootstrap/base.html' %}
+
+
+{% block title %}
+    {% if title %}
+     {{ title }} - {% if app_name %}{{app_name}}{%else%}Application{%endif%}
+    {% else %}
+      Welcome to {% if app_name %}{{app_name}}{%else%}Application{%endif%}
+    {% endif %}
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{url_for('static', filename='dashboard.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='sticky-footer.css')}}">
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+        {% if app_name %}{{app_name}}{%else%}Application{%endif%}
+      </a>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column border-bottom">
+              <li class="nav-item">
+                <!---<a class="nav-link active" href="#">-->
+                <a class="nav-link" href="/index">
+                  <span data-feather="home"></span>
+                  Dashboard <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/users">
+                  <span data-feather="users"></span>
+                  UsersDB
+                </a>
+              </li>
+              <!---
+              <li class="nav-item">
+                <a class="nav-link" href="/reports">
+                  <span data-feather="bar-chart-2"></span>
+                  Reports
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <span data-feather="layers"></span>
+                  Integrations
+                </a>
+              </li>
+              --->
+            </ul>
+
+            {# applications put in here additional menu content #}
+            {% block left_sidebar_extra_content %}{% endblock %}
+
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <div class="footer">
+                  {% if app_name %}{{app_name}}{%else%}Application{%endif%} {{app_version}} <br>
+                    © {{app_copyright}}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+              <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                {% if title %}{{ title }}{% else %}This page{% endif %}
+                </h1>
+
+
+
+                {#
+                <div class="btn-toolbar mb-2 mb-md-0">
+                  <div class="btn-group mr-2">
+                    <button class="btn btn-sm btn-outline-secondary">Share</button>
+                    <button class="btn btn-sm btn-outline-secondary">Export</button>
+                  </div>
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                    <span data-feather="calendar"></span>
+                    This week
+                  </button>
+                </div>
+                #}
+              </div>
+
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-info" role="alert">{{ message }}</div>
+                  {% endfor %}
+              {% endif %}
+              {% endwith %}
+
+
+              {% if debug %}
+              <div class="d-flex flex-wrap flex-md-nowrap pb-2 mb-3 border-bottom">
+              Javascript debug:  <p class="offset-md-1" id="debug"></p>
+              </div>
+              {% endif %}
+
+
+              {# application content needs to be provided in the app_content block #}
+              {% block app_content %}{% endblock %}
+
+        </main>
+      </div>
+    </div>
+
+
+
+  </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+
+<!-- Add a menu highlighing if the URL matches the menu links!-->
+<script>
+  $(document).ready(function(){
+      $("a[href='" + location.pathname + "']").addClass("active");
+      //$("a[href='" + window.location.href + "']").addClass("active");
+      document.getElementById("debug").innerHTML = location.pathname;
+  });
+</script>
+
+{% endblock %}
