@@ -35,6 +35,7 @@ def load_user(id):
 
 
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -47,7 +48,8 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, default=False)
     administrator  = db.Column(db.Boolean, default=False)
 
-
+    # Relationships
+    roles = db.relationship('Role', secondary='user_roles')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -99,7 +101,27 @@ class User(UserMixin, db.Model):
         return '<User {}>'.format(self.username)
 
 
-class Whitelistgroup(db.Model):
+# Define the Role data-model
+class Roles(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+# Define the UserRoles association table
+class UserRoles(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class WhitelistGroup(db.Model):
+    __tablename__ = 'whitelist_group'
     id = db.Column(db.Integer, primary_key=True)
     groupname = db.Column(db.String(64), unique=True)
 
@@ -109,10 +131,11 @@ class Whitelistgroup(db.Model):
         return '<WhitelistGroup {}>'.format(self.groupname)
 
 
-class Whitelistuser(db.Model):
+class WhitelistUser(db.Model):
+    __tablename__ = 'whitelist_user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('whitelistgroup.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey('whitelist_group.id'))
     comment  = db.Column(db.String(64))
 
     is_active = db.Column(db.Boolean, default=True)

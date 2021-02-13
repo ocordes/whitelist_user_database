@@ -18,7 +18,7 @@ from flask.cli import AppGroup
 
 # the defaults for the APP
 from app import create_app, db
-from app.models import User, Whitelistuser, Whitelistgroup
+from app.models import User, WhitelistUser, WhitelistGroup
 
 import logging
 
