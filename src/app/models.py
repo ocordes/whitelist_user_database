@@ -49,7 +49,7 @@ class User(UserMixin, db.Model):
     administrator  = db.Column(db.Boolean, default=False)
 
     # Relationships
-    roles = db.relationship('Role', secondary='user_roles')
+    roles = db.relationship('Roles', secondary='user_roles')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

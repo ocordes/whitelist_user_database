@@ -131,3 +131,4 @@ dmypy.json
 
 # exclude database
 src/data/*.db
+src/logs/*.log*

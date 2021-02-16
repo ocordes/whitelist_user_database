@@ -1,0 +1,70 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+
+<div class="card">
+  <div class="card-header">
+      <h5>List of available roles</h5>
+  </div>
+  <div class="card-body">
+    <form id="rolesformdelete" class="form-horizontal mb-5" role="form" method="post" action="">
+      {{dform.hidden_tag()}}
+      <div class="table-responsive col-6">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>ID</td>
+            <td>Role name</td>
+            <td>Time stamp</td>
+          </thead>
+          {% for role in roles %}
+          <tr>
+            <td>
+              <label>
+                <input type="checkbox" name="roles" value="{{role.id}}">
+              </label>
+            </td>
+            <td>{{role.id}}</td>
+            <td>{{role.name}} </td>
+            <td>{{role.timestamp.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {{ dform.remove(onclick="return (doStuff())", class_="btn btn-danger") }}
+    </form>
+    <div>
+    </div>
+    <form id="rolesformadd" class="form-horizontal" role="form" method="post" action="{{url_for('auth.add_roles')}}">
+      {{rform.hidden_tag()}}
+      {% if rform.rolename.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in rform.rolename.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user-check"></i></span>
+          </div>
+          {{rform.rolename(id="login-username", class_="form-control", placeholder="role name" ) }}
+      </div>
+      {{ rform.submit(class_="btn btn-info") }}
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+<script>
+function doStuff(){
+  return (confirm('Do you really want to remove these items?'))
+}
+</script>
+
+{% endblock %}

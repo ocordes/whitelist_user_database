@@ -1,0 +1,54 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+
+<div class="card">
+  <div class="card-header">
+    <h5>Add user data</h5>
+  </div>
+  <div class="card-body">
+    <form id="usersform" class="form-horizontal" role="form" method="post" action="">
+      {{nform.hidden_tag()}}
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
+          </div>
+          {{nform.username(id="username", class_="form-control", placeholder="username" ) }}
+      </div>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+          </div>
+          {{nform.first_name(id="first_name", class_="form-control", placeholder="first name" ) }}
+      </div>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+          </div>
+          {{nform.last_name(id="last_name", class_="form-control", placeholder="last name" ) }}
+      </div>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-envelope-open"></i></span>
+          </div>
+          {{nform.last_name(id="email", class_="form-control", placeholder="email" ) }}
+      </div>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-unlock"></i></span>
+          </div>
+          {{nform.password(id="login-password",class_="form-control",placeholder="password")}}
+      </div>
+      <div class="input-group form-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-unlock"></i></span>
+          </div>
+          {{nform.password(id="login-password2",class_="form-control",placeholder="Repeat password")}}
+      </div>
+      {{ nform.submit(class_="btn btn-primary") }}
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
