@@ -9,41 +9,104 @@
   <div class="card-body">
     <form id="usersform" class="form-horizontal" role="form" method="post" action="">
       {{nform.hidden_tag()}}
+      {% if nform.username.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.username.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
           </div>
           {{nform.username(id="username", class_="form-control", placeholder="username" ) }}
       </div>
+      {% if nform.first_name.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.first_name.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-user"></i></span>
           </div>
           {{nform.first_name(id="first_name", class_="form-control", placeholder="first name" ) }}
       </div>
+      {% if nform.last_name.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.last_name.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-user"></i></span>
           </div>
           {{nform.last_name(id="last_name", class_="form-control", placeholder="last name" ) }}
       </div>
+      {% if nform.email.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.email.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-envelope-open"></i></span>
           </div>
-          {{nform.last_name(id="email", class_="form-control", placeholder="email" ) }}
+          {{nform.email(id="email", class_="form-control", placeholder="email" ) }}
       </div>
+      {% if nform.password.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.password.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-unlock"></i></span>
           </div>
           {{nform.password(id="login-password",class_="form-control",placeholder="password")}}
       </div>
+      {% if nform.password2.errors|length > 0 %}
+      <div id="signupalert" class="alert alert-danger">
+        {% for error in nform.password2.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-unlock"></i></span>
           </div>
-          {{nform.password(id="login-password2",class_="form-control",placeholder="Repeat password")}}
+          {{nform.password2(id="login-password2",class_="form-control",placeholder="Repeat password")}}
+      </div>
+      <div class="table-responsive col-6">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>Role name</td>
+          </thead>
+          {% if roles is none %}
+          <tr>
+            <td colspan="2">No roles</td>
+          </tr>
+          {% else %}
+          {% for role in roles %}
+          <tr>
+            <td> <input type="checkbox" name="roles" value="{{role.id}}"></td>
+            <td>{{role.name}}</td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </table>
+
       </div>
       {{ nform.submit(class_="btn btn-primary") }}
     </form>

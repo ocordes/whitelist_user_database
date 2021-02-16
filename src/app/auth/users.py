@@ -102,10 +102,27 @@ def user(username):
 def newuser():
     nform = NewUserForm()
     if nform.validate_on_submit():
+        selected_roles = request.form.getlist("roles")
+
+        user = User(username=nform.username.data)
+        user.set_password(nform.password.data)
+        user.first_name = nform.first_name.data
+        user.last_name = nform.last_name.data
+        user.email = nform.email.data
+        user.is_active = True
+
+        # add roles selected from the form
+        for roleid in selected_roles:
+            user.roles.append(Roles.query.get(int(roleid)))
+
+        db.session.add(user)
+        db.session.commit()
+
         return redirect(url_for('auth.users'))
 
     return render_template('auth/newuser.html',
                             title='New User',
+                            roles=Roles.query.all(),
                             nform=nform)
 
 

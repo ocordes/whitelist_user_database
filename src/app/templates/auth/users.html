@@ -69,5 +69,16 @@
   </div>
 </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+
+<script>
+function doStuff(){
+  return (confirm('Do you really want to remove these items?'))
+}
+</script>
 
 {% endblock %}
