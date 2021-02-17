@@ -16,11 +16,11 @@ from sqlalchemy import desc
 
 from app import db
 from app.auth import bp
-from app.models import User, Roles
+from app.models import User, Roles, UserRoles
 
 from app.auth.forms import UserListForm, RolesForm, DeleteRolesForm, \
-                            NewUserForm, \
-                            EditProfileForm, UpdatePasswordForm
+                            NewUserForm, EditUserForm
+
 
 
 from app.auth.admin import admin_required
@@ -71,29 +71,48 @@ def users():
 @bp.route('/user/<username>', methods=['GET','POST'])
 @login_required
 def user(username):
+    if not current_user.administrator:
+        if username != current_user.username:
+            flash('You are not allowed to change other users!')
+            return redirect(url_for('main.index'))
     user = User.query.filter_by(username=username).first_or_404()
 
-    form = EditProfileForm(current_user.username)
+    # setup the form
+    form = EditUserForm()
+    form.roles.choices = [(r.id, r.name) for r in Roles.query.all()]
+
     if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.first_name = form.first_name.data
-        current_user.last_name = form.last_name.data
-        current_user.email = form.email.data
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.email = form.email.data
+
+        # change password only if a new password is set!
+        if form.password.data != '':
+            user.set_password(form.password.data)
+
+        # only an administrator can change the roles!
+        if current_user.administrator:
+            user.roles = [Roles.query.get(roleid) for roleid in form.roles.data]
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('auth.user', username=current_user.username))
+        return redirect(url_for('auth.user', username=user.username))
     elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.first_name.data = current_user.first_name
-        form.last_name.data = current_user.last_name
-        form.email.data = current_user.email
+        form.first_name.data = user.first_name
+        form.last_name.data = user.last_name
+        form.email.data = user.email
+        form.password.data = ''
+        form.password2.data = ''
 
-    return render_template('auth/user.html',
+        # fill in the roles
+        form.roles.data = [r.id for r in user.roles]
+
+
+    return render_template('auth/edituser.html',
                             title='User preferences',
                             user=user,
-                            form=form,
-                            projects=user.projects.all(),
-                            pform=UpdatePasswordForm())
+                            roles=Roles.query.all(),
+                            nform=form )
+
 
 
 @bp.route('/newuser', methods=['GET','POST'])
@@ -101,6 +120,7 @@ def user(username):
 @admin_required
 def newuser():
     nform = NewUserForm()
+    nform.roles.choices = [(r.id, r.name) for r in Roles.query.all()]
     if nform.validate_on_submit():
         selected_roles = request.form.getlist("roles")
 
@@ -112,8 +132,7 @@ def newuser():
         user.is_active = True
 
         # add roles selected from the form
-        for roleid in selected_roles:
-            user.roles.append(Roles.query.get(int(roleid)))
+        user.roles = [Roles.query.get(roleid) for roleid in nform.roles.data]
 
         db.session.add(user)
         db.session.commit()

@@ -2,8 +2,8 @@
 
 app/auth/routes.py
 
-written by: Oliver Cordes 2021-02-13
-changed by: Oliver Cordes 2021-02-13
+written by: Oliver Cordes 2021-02-17
+changed by: Oliver Cordes 2021-02-17
 
 """
 
@@ -18,7 +18,7 @@ from werkzeug.urls import url_parse
 
 from app import db
 from app.auth import bp
-from app.auth.forms import LoginForm, EditProfileForm, \
+from app.auth.forms import LoginForm,  \
                            UpdatePasswordForm, ResetPasswordRequestForm, \
                            ResetPasswordForm, AdminPasswordForm, \
                            PreferencesForm
@@ -43,7 +43,7 @@ def login():
     if User.query.count()==0:  # no users available
         form = AdminPasswordForm()
         if form.validate_on_submit():
-            user = User(username='admin', email='')
+            user = User(username='admin', email='admin@localhost.com')
             user.set_password(form.password.data)
             user.first_name = 'System'
             user.last_name = 'Administrator'
@@ -86,9 +86,7 @@ def login():
                 current_app.logger.info(msg)
                 return redirect(url_for('auth.login'))
         return render_template('auth/login.html', title='Sign In',
-                                form=form,
-                                rform=RegistrationForm(),
-                                pform=ResetPasswordRequestForm() )
+                                form=form )
 
 
 @bp.route('/logout')
@@ -98,18 +96,3 @@ def logout():
     msg = 'User \'{}\' logged out!'.format(username)
     current_app.logger.info(msg)
     return redirect(url_for('main.index'))
-
-
-
-
-@bp.route('/update_password', methods=['POST'])
-def update_password():
-    pform=UpdatePasswordForm()
-
-
-    if pform.validate_on_submit():
-        current_user.set_password(pform.password.data)
-        db.session.commit()
-        flash('Your new password has been saved.')
-
-    return redirect(url_for('auth.user', username=current_user.username))

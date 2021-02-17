@@ -3,15 +3,22 @@
 app/auth/forms.py
 
 written by: Oliver Cordes 2021-02-16
-changed by: Oliver Cordes 2021-02-16
+changed by: Oliver Cordes 2021-02-17
 
 """
 
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, \
+                    SubmitField, TextAreaField, SelectField, SelectMultipleField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
 from app.models import User, Roles
+
+from wtforms import widgets, SelectMultipleField
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class LoginForm(FlaskForm):
@@ -42,6 +49,9 @@ class NewUserForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+
+    roles = MultiCheckboxField('User roles', coerce=int)
+
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
@@ -55,24 +65,16 @@ class NewUserForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
-class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+class EditUserForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[])
+    password2 = PasswordField(
+        'Repeat Password', validators=[EqualTo('password')])
     submit = SubmitField('Update')
 
-
-    def __init__(self, original_username, *args, **kwargs):
-        super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
-
-
-    def validate_username(self, username):
-        if username.data != self.original_username:
-            user = User.query.filter_by(username=self.username.data).first()
-            if user is not None:
-                raise ValidationError('Please use a different username.')
+    roles = MultiCheckboxField('User roles', coerce=int)
 
 
 

@@ -19,7 +19,7 @@
 
 {% block navbar %}
     <nav class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{url_for('main.index')}}">
         {% if app_name %}{{app_name}}{%else%}Application{%endif%}
       </a>
     </nav>

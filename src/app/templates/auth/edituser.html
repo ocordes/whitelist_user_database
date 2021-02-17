@@ -4,23 +4,16 @@
 
 <div class="card">
   <div class="card-header">
-    <h5>Add user data</h5>
+    <h5>Edit user data</h5>
   </div>
   <div class="card-body">
     <form id="usersform" class="form-horizontal" role="form" method="post" action="">
       {{nform.hidden_tag()}}
-      {% if nform.username.errors|length > 0 %}
-      <div id="signupalert" class="alert alert-danger">
-        {% for error in nform.username.errors %}
-        <span>{{error}}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
       <div class="input-group form-group">
           <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
           </div>
-          {{nform.username(id="username", class_="form-control", placeholder="username" ) }}
+          <span class="input-group-text form-control">{{user.username}}</span>
       </div>
       {% if nform.first_name.errors|length > 0 %}
       <div id="signupalert" class="alert alert-danger">
@@ -91,7 +84,7 @@
         <h4>Roles</h4>
       </div>
       <div class="input-group form-group col-md-2">
-        {{ nform.roles(class_="list-unstyled")}}
+        {{nform.roles(class_="list-unstyled")}}
       </div>
       {{ nform.submit(class_="btn btn-primary") }}
     </form>
