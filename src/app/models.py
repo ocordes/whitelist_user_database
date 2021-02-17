@@ -110,6 +110,10 @@ class Roles(db.Model):
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # this is necessary to update the UserRoles table,
+    # if a Role is removed!
+    users = db.relationship('User', secondary='user_roles')
+
 
 # Define the UserRoles association table
 class UserRoles(db.Model):
