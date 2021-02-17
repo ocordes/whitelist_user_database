@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2021-02-12
-changed by: Oliver Cordes 2021-02-12
+changed by: Oliver Cordes 2021-02-17
 
 """
 
@@ -20,7 +20,9 @@ from werkzeug.urls import url_parse, url_unparse
 from app import db
 from app.main import bp
 from app.models import *
+from app.main.forms import WhitelistGroupForm, DeleteWhitelistGroupForm
 
+from app.auth.admin import admin_required
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +48,56 @@ def index():
                             )
 
 
-@bp.route('/users')
+@bp.route('/whiteusers')
 def show_users():
     return render_template('users.html',
                             title='Whitelist Users')
+
+
+@bp.route('/whitelistgroups', methods=['GET','POST'])
+@login_required
+@admin_required
+def whitelistgroups():
+    rform = WhitelistGroupForm()
+    rform.role.choices = [(r.id, r.name) for r in Roles.query.all()]
+    
+    dform=DeleteWhitelistGroupForm()
+    if dform.validate_on_submit():
+        # get a list of selected items
+        selected_groups = request.form.getlist("whitelistgroups")
+        print(selected_groups)
+        for groupid in selected_groups:
+            group = WhitelistGroup.query.get(int(groupid))
+            print(group)
+            db.session.delete(group)
+
+        db.session.commit()
+
+
+    return render_template('main/whitelistgroups.html',
+                            whitelistgroups=WhitelistGroup.query.all(),
+                            Roles=Roles,
+                            dform=dform,
+                            rform=rform,
+                            title='Whitelist Groups')
+
+@bp.route('/whitelistgroups/add', methods=['POST'])
+@login_required
+@admin_required
+def add_whitelistgroups():
+    rform = WhitelistGroupForm()
+    rform.role.choices = [(r.id, r.name) for r in Roles.query.all()]
+    if rform.validate_on_submit():
+        group = WhitelistGroup(groupname=rform.groupname.data)
+        group.role_id = rform.role.data
+        db.session.add(group)
+        db.session.commit()
+        return redirect(url_for('main.whitelistgroups'))
+    # in the case of validation errors,
+    # use the same page again!
+    return render_template('main/whitelistgroups.html',
+                            title='Whitelist Groups',
+                            groups=WhitelistGroup.query.all(),
+                            Roles=Roles,
+                            rform=rform,
+                            dform=DeleteWhitelistGroupForm())

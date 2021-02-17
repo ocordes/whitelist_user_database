@@ -130,6 +130,8 @@ class WhitelistGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     groupname = db.Column(db.String(64), unique=True)
 
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):

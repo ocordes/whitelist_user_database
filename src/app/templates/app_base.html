@@ -83,6 +83,12 @@
                   Roles
                 </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.whitelistgroups')}}">
+                  <span data-feather="user-check"></span>
+                  Whitelist Groups
+                </a>
+              </li>
               {% else %}
               <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                 <span>User: {{current_user.username}}</span>
