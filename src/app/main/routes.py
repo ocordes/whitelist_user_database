@@ -20,7 +20,8 @@ from werkzeug.urls import url_parse, url_unparse
 from app import db
 from app.main import bp
 from app.models import *
-from app.main.forms import WhitelistGroupForm, DeleteWhitelistGroupForm
+from app.main.forms import WhitelistGroupForm, DeleteWhitelistGroupForm, \
+    AddUserForm, UploadUserForm
 
 from app.auth.admin import admin_required
 
@@ -101,3 +102,13 @@ def add_whitelistgroups():
                             Roles=Roles,
                             rform=rform,
                             dform=DeleteWhitelistGroupForm())
+
+
+@bp.route('/adduser', methods=['GET', 'POST'])
+@login_required
+def add_whitelistuser():
+    form = AddUserForm()
+    form2 = UploadUserForm()
+
+    return render_template('main/add_user.html',
+                            title='Add Whitelist User')

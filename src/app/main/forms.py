@@ -3,7 +3,7 @@
 app/main/forms.py
 
 written by: Oliver Cordes 2021-02-17
-changed by: Oliver Cordes 2021-02-17
+changed by: Oliver Cordes 2021-02-18
 
 """
 
@@ -35,3 +35,11 @@ class WhitelistGroupForm(FlaskForm):
 
 class DeleteWhitelistGroupForm(FlaskForm):
     remove = SubmitField('Delete')
+
+
+class AddUserForm(FlaskForm):
+    submit = SubmitField('Add')
+
+
+class UploadUserForm(FlaskForm):
+    upload = SubmitField('Upload')

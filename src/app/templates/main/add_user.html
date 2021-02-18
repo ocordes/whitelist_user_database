@@ -1,0 +1,35 @@
+{% extends "app_base.html" %}
+
+{% block app_content %}
+
+<div class="card">
+  <div class="card-header">
+      <h5>Add user</h5>
+  </div>
+  <div class="card-body">
+    <form id="add_list_user" class="form-horizontal mb-5" role="form" method="post" action="">
+      {{form.hidden_tag()}}
+    
+      {{form.submit(class_="btn btn-info") }}
+    </form>
+    <form id="upload_list_user" class="form-horizontal mb-5" role="form" method="post" action="url_for('')">
+      {{form2.hidden_tag()}}
+    
+      {{form2.upload(class_="btn btn-info") }}
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+<script>
+function doStuff(){
+  return (confirm('Do you really want to remove these items?'))
+}
+</script>
+
+{% endblock %}
