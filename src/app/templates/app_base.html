@@ -186,8 +186,16 @@
   $(document).ready(function(){
       $("a[href='" + location.pathname + "']").addClass("active");
       //$("a[href='" + window.location.href + "']").addClass("active");
-      document.getElementById("debug").innerHTML = location.pathname;
+      //document.getElementById("debug").innerHTML = location.pathname;
   });
 </script>
+
+<!--- Add tooltip always on a page -->
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  });
+</script>
+
 
 {% endblock %}

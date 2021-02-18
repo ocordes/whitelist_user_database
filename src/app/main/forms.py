@@ -38,6 +38,7 @@ class DeleteWhitelistGroupForm(FlaskForm):
 
 
 class AddUserForm(FlaskForm):
+    users = TextAreaField(u'User IDs')
     submit = SubmitField('Add')
 
 

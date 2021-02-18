@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2021-02-12
-changed by: Oliver Cordes 2021-02-17
+changed by: Oliver Cordes 2021-02-18
 
 """
 
@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 
 from flask import current_app, request, render_template, url_for, flash,  \
-                  redirect, send_from_directory, jsonify, session
+    redirect, send_from_directory, jsonify, session, make_response
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
@@ -110,5 +110,32 @@ def add_whitelistuser():
     form = AddUserForm()
     form2 = UploadUserForm()
 
+    if form.validate_on_submit():
+        print('Add users')
+        # textfield is string
+        data = form.users.data.split('\n')
+        for i in data:
+            print(i)
+
     return render_template('main/add_user.html',
-                            title='Add Whitelist User')
+                            title='Add Whitelist User',
+                            form=form,
+                            form2=form2)
+
+
+@bp.route('/uploaduser', methods=['POST'])
+@login_required
+def upload_whitelistuser():
+
+    # get the file from the request
+    f = request.files["file"]
+
+    # split the lines from the submitted file
+    for i in f:
+        print(i.decode('utf8').strip())
+
+    msg = 'User added'
+    res = make_response(jsonify({"message": msg}), 200)
+
+    return res
+
