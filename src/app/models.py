@@ -134,6 +134,10 @@ class WhitelistGroup(db.Model):
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # this is necessary to update the UserRoles table,
+    # if a Role is removed!
+    users = db.relationship('WhitelistUser', secondary='whitelist_user_group')
+
     def __repr__(self):
         return '<WhitelistGroup {}>'.format(self.groupname)
 
@@ -142,13 +146,27 @@ class WhitelistUser(db.Model):
     __tablename__ = 'whitelist_user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('whitelist_group.id'))
     comment  = db.Column(db.String(64))
 
     is_active = db.Column(db.Boolean, default=True)
+
+    # Relationships
+    roles = db.relationship('WhitelistGroup', secondary='whitelist_user_group')
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
     def __repr__(self):
         return '<WhitelistUser {}>'.format(self.username)
+
+
+# Define the UserRoles association table
+class WhiteListUserGroups(db.Model):
+    __tablename__ = 'whitelist_user_groups'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey(
+        'whitelist_user.id', ondelete='CASCADE'))
+    group_id = db.Column(db.Integer(), db.ForeignKey(
+        'whitelist_group.id', ondelete='CASCADE'))
+
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

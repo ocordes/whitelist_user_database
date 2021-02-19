@@ -10,6 +10,14 @@
     <form id="add_list_user" class="form-horizontal mb-5" role="form" method="post" action="">
       {{form.hidden_tag()}}
       <div class="input-group form-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            Groups
+          </div>
+        </div>
+        {{form.group(id="group", class_="form-control")}}
+      </div>
+      <div class="input-group form-group">
       {{form.users(class_="form-control", rows="10", title="Enter user IDs in multiple lines, all IDs in the same line needs to be comma seperated!", 
             data_placement="top", data_toggle="tooltip",
             placeholder="user IDs (comma seperated in the same line or IDs in multiple lines)")}}

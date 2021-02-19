@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2021-02-12
-changed by: Oliver Cordes 2021-02-18
+changed by: Oliver Cordes 2021-02-19
 
 """
 
@@ -21,7 +21,7 @@ from app import db
 from app.main import bp
 from app.models import *
 from app.main.forms import WhitelistGroupForm, DeleteWhitelistGroupForm, \
-    AddUserForm, UploadUserForm
+    AddUserForm
 
 from app.auth.admin import admin_required
 
@@ -108,7 +108,15 @@ def add_whitelistgroups():
 @login_required
 def add_whitelistuser():
     form = AddUserForm()
-    form2 = UploadUserForm()
+
+    if current_user.administrator:
+        groups = WhitelistGroup.query.all()
+    else:
+        # calculate the groups available for a specific role
+        role_ids = [r.id for r in current_user.roles]
+        groups = WhitelistGroup.query.filter(WhitelistGroup.role_id.in_(role_ids)).all()
+
+    form.group.choices = [(g.id, g.groupname) for g in groups]
 
     if form.validate_on_submit():
         print('Add users')
@@ -116,11 +124,12 @@ def add_whitelistuser():
         data = form.users.data.split('\n')
         for i in data:
             print(i)
+        print(form.group.data)
 
     return render_template('main/add_user.html',
                             title='Add Whitelist User',
                             form=form,
-                            form2=form2)
+                            groups=groups)
 
 
 @bp.route('/uploaduser', methods=['POST'])
