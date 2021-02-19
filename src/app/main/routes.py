@@ -132,9 +132,9 @@ def add_whitelistuser():
                             groups=groups)
 
 
-@bp.route('/uploaduser', methods=['POST'])
+@bp.route('/uploaduser/<groupid>', methods=['POST'])
 @login_required
-def upload_whitelistuser():
+def upload_whitelistuser(groupid):
 
     # get the file from the request
     f = request.files["file"]
@@ -142,6 +142,8 @@ def upload_whitelistuser():
     # split the lines from the submitted file
     for i in f:
         print(i.decode('utf8').strip())
+
+    print(groupid)
 
     msg = 'User added'
     res = make_response(jsonify({"message": msg}), 200)

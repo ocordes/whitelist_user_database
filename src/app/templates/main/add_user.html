@@ -40,7 +40,7 @@
           accept=".dat, .txt, .list">
         <label id="file_input_label" class="custom-file-label" for="image">Choose file with user IDs...</label>
         </div>
-        <button onclick="upload('{{url_for('main.upload_whitelistuser')}}');" id="upload_btn" class="btn btn-info">Upload</button>
+        <button onclick="upload('{{url_for('main.upload_whitelistuser',groupid='')}}');" id="upload_btn" class="btn btn-info">Upload</button>
         <button class="btn btn-primary d-none" id="loading_btn" type="button" disabled>
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Uploading...
@@ -99,6 +99,8 @@ var alert_wrapper = document.getElementById("alert_wrapper");
 var input = document.getElementById("file_input");
 var file_input_label = document.getElementById("file_input_label");
 
+// Get a reference to the group selector
+var group_selector = document.getElementById("group");
 
 // Function to show alerts
 function show_alert(message, alert) {
@@ -125,6 +127,14 @@ function upload(url) {
     return;
 
   }
+
+  // get the group id from the selector widet 
+  var group_id = group_selector.value;
+  // the url has a / at the end, because of url_for() in
+  // python and a reference with a group_id at the end 
+  // which is unknown during jinja2 processing and html
+  // setup
+  var group_url = url + group_id;
 
   // Create a new FormData instance
   var data = new FormData();
@@ -229,7 +239,7 @@ function upload(url) {
   });
 
   // Open and send the request
-  request.open("post", url);
+  request.open("post", group_url);
   request.send(data);
   
   cancel_btn.addEventListener("click", function () {

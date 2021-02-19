@@ -136,7 +136,7 @@ class WhitelistGroup(db.Model):
 
     # this is necessary to update the UserRoles table,
     # if a Role is removed!
-    users = db.relationship('WhitelistUser', secondary='whitelist_user_group')
+    users = db.relationship('WhitelistUser', secondary='whitelist_user_groups')
 
     def __repr__(self):
         return '<WhitelistGroup {}>'.format(self.groupname)
@@ -151,7 +151,7 @@ class WhitelistUser(db.Model):
     is_active = db.Column(db.Boolean, default=True)
 
     # Relationships
-    roles = db.relationship('WhitelistGroup', secondary='whitelist_user_group')
+    roles = db.relationship('WhitelistGroup', secondary='whitelist_user_groups')
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
