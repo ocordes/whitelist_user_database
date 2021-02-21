@@ -122,9 +122,24 @@ def add_whitelistuser():
         print('Add users')
         # textfield is string
         data = form.users.data.split('\n')
-        for i in data:
-            print(i)
-        print(form.group.data)
+        # recompile the list of users regarding to the instructions
+        new_data = []
+        for line in data:
+            line = line.strip()
+            if line != '':
+                s = line.split(',')
+                for i in s:
+                    new_data.append(i.strip())
+
+        group = WhitelistGroup.query.get(form.group.data)
+        for username in new_data:
+            whitelist_user = WhitelistUser.query.filter_by(username=username).first()
+            if whitelist_user is None:
+                whitelist_user = WhitelistUser(username=username)
+                whitelist_user.comment = ''
+                db.session.add(whitelist_user)
+            whitelist_user.roles.append(group)
+            db.session.commit()
 
     return render_template('main/add_user.html',
                             title='Add Whitelist User',

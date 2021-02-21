@@ -151,7 +151,8 @@ class WhitelistUser(db.Model):
     is_active = db.Column(db.Boolean, default=True)
 
     # Relationships
-    roles = db.relationship('WhitelistGroup', secondary='whitelist_user_groups')
+    roles = db.relationship('WhitelistGroup', secondary='whitelist_user_groups') 
+                            #cascade="all, delete")
 
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
