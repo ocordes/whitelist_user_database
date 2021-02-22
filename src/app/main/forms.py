@@ -3,7 +3,7 @@
 app/main/forms.py
 
 written by: Oliver Cordes 2021-02-17
-changed by: Oliver Cordes 2021-02-19
+changed by: Oliver Cordes 2021-02-22
 
 """
 
@@ -41,3 +41,8 @@ class AddUserForm(FlaskForm):
     group = SelectField(coerce=int)
     users = TextAreaField(u'User IDs')
     submit = SubmitField('Add')
+    
+class DeleteWhitelistUserForm(FlaskForm):
+    group = SelectField(coerce=int)
+    select = SubmitField('Select')
+    remove = SubmitField('Delete')

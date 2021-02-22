@@ -33,7 +33,7 @@
           {% endfor %}
         </table>
       </div>
-      {{ dform.remove(onclick="return (doStuff())", class_="btn btn-danger") }}
+      {{ dform.remove(onclick="return (ask_for_deletion())", class_="btn btn-danger") }}
     </form>
     <div>
     </div>
@@ -62,17 +62,5 @@
     </form>
   </div>
 </div>
-
-
-{% endblock %}
-
-{% block scripts %}
-{{super()}}
-
-<script>
-function doStuff(){
-  return (confirm('Do you really want to remove these items?'))
-}
-</script>
 
 {% endblock %}

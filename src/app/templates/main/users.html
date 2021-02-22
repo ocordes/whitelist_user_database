@@ -1,0 +1,96 @@
+{% extends "users_base.html" %}
+
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('static', filename='pagination.css')}}">
+{% endblock %}
+
+
+{% block app_content %}
+
+<div class="card">
+    <div class="card-header">
+        <h5>List of available whitelist-users</h5>
+    </div>
+    <div class="card-body">
+        <form id="rolesformdelete" class="form-horizontal mb-5" role="form" method="post" action="">
+            {{dform.hidden_tag()}}
+            <div class="input-group form-group col-6">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        Groups
+                    </div>
+                </div>
+                <div class="input-group-text">
+                    {{dform.group(id="group", class_="form-control")}}
+                </div>
+                <div class="input-group-text">
+                    {{dform.select(class_="btn btn-info")}}
+                </div>
+            </div>
+            <div class="table-responsive col-6">
+                {{ pagination.links }}
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <td></td>
+                        <td>ID</td>
+                        <td>Name</td>
+                        <td>Group</td>
+                        <td>Time stamp</td>
+                    </thead>
+                    {% for user in whitelistuser %}
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="whitelistusers" value="{{user.id}}">
+                            </label>
+                        </td>
+                        <td>{{user.id}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.group_str()}}</td>
+                        <td>{{user.timestamp.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {{ pagination.info }}
+                {{ pagination.links }}
+            </div>
+            <button onclick="checkall('whitelistusers')" id="btn-checkall" type="button" class="btn btn-info">
+                    <i class="icon-hand-right"></i>Select all</button>
+            <button onclick="uncheckall('whitelistusers')" id="btn-uncheckall" type="button" class="btn btn-info">
+                    <i class="icon-hand-right"></i>Unselect all</button>
+            {{ dform.remove(onclick="return (ask_for_deletion())", class_="btn btn-danger") }}
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+<script>
+    function checkall(name) {
+            var x = document.getElementsByName(name);
+            var i;
+            for (i = 0; i < x.length; i++) {
+                if (x[i].type == "checkbox") {
+                    x[i].checked = true;
+                }
+            }
+        }
+
+        function uncheckall(name) {
+            var x = document.getElementsByName(name);
+            var i;
+            for (i = 0; i < x.length; i++) {
+                if (x[i].type == "checkbox") {
+                    x[i].checked = false;
+                }
+            }
+        }
+</script>
+
+{% endblock %}

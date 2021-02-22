@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 
 app/main/routes.py
+~~~~~~~~~~~~~~~~~~
 
-written by: Oliver Cordes 2021-02-12
-changed by: Oliver Cordes 2021-02-19
+written by : Oliver Cordes 2021-02-12
+changed by : Oliver Cordes 2021-02-22
 
 """
 
@@ -16,12 +18,13 @@ from flask import current_app, request, render_template, url_for, flash,  \
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
+from flask_paginate import Pagination, get_page_parameter
 
 from app import db
 from app.main import bp
 from app.models import *
 from app.main.forms import WhitelistGroupForm, DeleteWhitelistGroupForm, \
-    AddUserForm
+    AddUserForm, DeleteWhitelistUserForm
 
 from app.auth.admin import admin_required
 
@@ -49,9 +52,86 @@ def index():
                             )
 
 
-@bp.route('/whiteusers')
+@bp.route('/whiteusers', methods=['GET', 'POST'])
+@login_required
 def show_users():
-    return render_template('users.html',
+    # extract the information from the request
+    search = False
+    q = request.args.get('q')
+    if q:
+        search = True
+    page     = request.args.get(get_page_parameter(), type=int, default=1)
+    groupid  = request.args.get('groupid', type=int, default=0)
+    
+
+    # get the form
+    dform = DeleteWhitelistUserForm()
+
+    # setup the group box
+    if current_user.administrator:
+        groups = WhitelistGroup.query.all()
+        dform.group.choices = [(0, 'All')]
+    else:
+        # calculate the groups available for a specific role
+        role_ids = [r.id for r in current_user.roles]
+        groups = WhitelistGroup.query.filter(
+            WhitelistGroup.role_id.in_(role_ids)).all()
+        dform.group.choices = []
+
+    # add all other groups
+    dform.group.choices += [(g.id, g.groupname) for g in groups]
+
+    if dform.validate_on_submit():
+        if dform.remove.data:
+            # get a list of selected items
+            selected_users = request.form.getlist("whitelistusers")
+            for userid in selected_users:
+                 user = WhitelistUser.query.get(int(userid))
+                #db.session.delete(user)
+            #db.session.commit()
+            return redirect(url_for('main.show_users'))
+
+        # must be the group select button
+        groupid = dform.group.data
+        # reset the view to start from the beginning
+        page = 1
+
+
+    # select the previous selected group
+    dform.group.data    = groupid
+
+
+    # setup the pagination
+    users = WhitelistUser.query.all()
+    pagination = Pagination(page=page, total=len(users),
+                            css_framework='bootstrap4',
+                            href=url_for('main.show_users') +
+                            '?page={}&groupid=%d' % groupid,
+                            display_msg='(Displaying <b>{start}-{end}</b> of <b>{total}</b> Users)',
+                            search=search, record_name='whitelist_users')
+
+    # select only the users from the pagination setup
+    if groupid == 0:   # all groups
+        users = WhitelistUser.query.paginate(
+            page, pagination.per_page, error_out=False).items
+    else:
+        #role_ids = [r.id for r in current_user.roles]
+        #groups = WhitelistGroup.query.filter(
+        #    WhitelistGroup.role_id.in_(role_ids)).all()
+        #group = WhitelistGroup.query.get(id=groupid)
+        group_ids = [groupid]
+        usergroups = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(group_ids)).paginate(page, pagination.per_page, error_out=False).items
+        #users = WhitelistUser.query.filter(WhitelistUser.)
+        print(usergroups)
+        users = WhitelistUser.query.paginate(
+            page, pagination.per_page, error_out=False).items
+
+
+    return render_template('main/users.html',
+                            whitelistuser=users,
+                            dform=dform,
+                            pagination=pagination, 
+                            groups=groups,
                             title='Whitelist Users')
 
 
@@ -66,12 +146,9 @@ def whitelistgroups():
     if dform.validate_on_submit():
         # get a list of selected items
         selected_groups = request.form.getlist("whitelistgroups")
-        print(selected_groups)
         for groupid in selected_groups:
             group = WhitelistGroup.query.get(int(groupid))
-            print(group)
             db.session.delete(group)
-
         db.session.commit()
 
 
@@ -140,6 +217,8 @@ def add_whitelistuser():
                 db.session.add(whitelist_user)
             whitelist_user.roles.append(group)
             db.session.commit()
+
+        return redirect(url_for('main.show_users'))
 
     return render_template('main/add_user.html',
                             title='Add Whitelist User',

@@ -160,6 +160,9 @@ class WhitelistUser(db.Model):
     def __repr__(self):
         return '<WhitelistUser {}>'.format(self.username)
 
+    def group_str(self):
+        return ','.join([g.groupname for g in self.roles])
+
 
 # Define the UserRoles association table
 class WhiteListUserGroups(db.Model):
