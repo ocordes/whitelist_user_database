@@ -5,7 +5,7 @@ app/main/routes.py
 ~~~~~~~~~~~~~~~~~~
 
 written by : Oliver Cordes 2021-02-12
-changed by : Oliver Cordes 2021-02-22
+changed by : Oliver Cordes 2021-02-23
 
 """
 
@@ -77,6 +77,7 @@ def show_users():
         groups = WhitelistGroup.query.filter(
             WhitelistGroup.role_id.in_(role_ids)).all()
         dform.group.choices = []
+        dform.group.choices = [(0, 'All')]
 
     # add all other groups
     dform.group.choices += [(g.id, g.groupname) for g in groups]
@@ -93,6 +94,7 @@ def show_users():
 
         # must be the group select button
         groupid = dform.group.data
+
         # reset the view to start from the beginning
         page = 1
 
@@ -100,10 +102,16 @@ def show_users():
     # select the previous selected group
     dform.group.data    = groupid
 
+    # calculate the valid groupids
+    if groupid == 0:
+        groupids = [g.id for g in groups]
+    else:
+        groupids = [groupid]
 
-    # setup the pagination
-    users = WhitelistUser.query.all()
-    pagination = Pagination(page=page, total=len(users),
+    # calculate the number of valid users from WhiteListUserGroups
+    max_users = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(groupids)).count()
+
+    pagination = Pagination(page=page, total=max_users,
                             css_framework='bootstrap4',
                             href=url_for('main.show_users') +
                             '?page={}&groupid=%d' % groupid,
@@ -111,20 +119,27 @@ def show_users():
                             search=search, record_name='whitelist_users')
 
     # select only the users from the pagination setup
-    if groupid == 0:   # all groups
-        users = WhitelistUser.query.paginate(
-            page, pagination.per_page, error_out=False).items
-    else:
-        #role_ids = [r.id for r in current_user.roles]
-        #groups = WhitelistGroup.query.filter(
-        #    WhitelistGroup.role_id.in_(role_ids)).all()
-        #group = WhitelistGroup.query.get(id=groupid)
-        group_ids = [groupid]
-        usergroups = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(group_ids)).paginate(page, pagination.per_page, error_out=False).items
-        #users = WhitelistUser.query.filter(WhitelistUser.)
-        print(usergroups)
-        users = WhitelistUser.query.paginate(
-            page, pagination.per_page, error_out=False).items
+    #if groupid == 0:   # all groups
+    #    users = WhitelistUser.query.paginate(
+    #        page, pagination.per_page, error_out=False).items
+    #else:
+    #    #role_ids = [r.id for r in current_user.roles]
+    #    #groups = WhitelistGroup.query.filter(
+    #    #    WhitelistGroup.role_id.in_(role_ids)).all()
+    #    #group = WhitelistGroup.query.get(id=groupid)
+    #    group_ids = [groupid]
+    #    usergroups = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(group_ids)).paginate(page, pagination.per_page, error_out=False).items
+    #    #users = WhitelistUser.query.filter(WhitelistUser.)
+    #    usergroupsids = [i.user_id for i in usergroups]
+    #    print(usergroupsids)
+    #    users = WhitelistUser.query.filter(WhitelistUser.id.in_(usergroupsids))
+
+    # get the userids from the valid users, using the pagination settings
+    usergroups = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(
+        groupids)).paginate(page, pagination.per_page, error_out=False).items
+    usergroupsids = [i.user_id for i in usergroups]
+    print(usergroupsids)
+    users = WhitelistUser.query.filter(WhitelistUser.id.in_(usergroupsids))
 
 
     return render_template('main/users.html',
