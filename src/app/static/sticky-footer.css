@@ -17,6 +17,15 @@ body {
   /*background-color: #f5f5f5;*/
 }
 
+.footer2 {
+  position: fixed;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+  /*background-color: red;
+  color: white; */
+  text-align: center;
+}
 
 /* Custom page CSS
 -------------------------------------------------- */

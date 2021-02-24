@@ -5,13 +5,14 @@ app/main/routes.py
 ~~~~~~~~~~~~~~~~~~
 
 written by : Oliver Cordes 2021-02-12
-changed by : Oliver Cordes 2021-02-23
+changed by : Oliver Cordes 2021-02-24
 
 """
 
 import os
 from datetime import datetime, timedelta
 from dateutil.relativedelta import *
+import pkg_resources
 
 from flask import current_app, request, render_template, url_for, flash,  \
     redirect, send_from_directory, jsonify, session, make_response
@@ -47,7 +48,19 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
+    installed_packages = [(d.project_name, d.version)
+                          for d in pkg_resources.working_set][::-1]
+
+    server_users = User.query.count()
+    server_roles = Roles.query.count()
+    whitelist_users = WhitelistUser.query.count()
+    whitelist_groups = WhitelistGroup.query.count()
     return render_template('index.html',
+                            installed_packages=installed_packages,
+                            server_users=server_users,
+                            server_roles=server_roles,
+                            whitelist_users=whitelist_users,
+                            whitelist_groups=whitelist_groups,
                             title='Dashboard'
                             )
 

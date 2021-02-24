@@ -3,6 +3,60 @@
 
 {% block app_content %}
 
+<div class="card">
+    <div class="card-header">
+        <h5>Database</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive col-4">
+            <table class="table table-sm table-bordered">
+                <tr>
+                    <td>Server Users</td>
+                    <td>{{server_users}}</td>
+                </tr>
+                <tr>
+                    <td>Server Roles</td>
+                    <td>{{server_roles}}</td>
+                </tr>
+                <tr>
+                    <td>Whitelist Users</td>
+                    <td>{{whitelist_users}}</td>
+                </tr>
+                <tr>
+                    <td>Whitelist Groups</td>
+                    <td>{{whitelist_groups}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div style="padding:20px;">
+    <img src="{{url_for('static', filename='python-powered-w-200x80.png')}}" style="height: 60px;" />
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Used Python modules</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive col-4">
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <td>Name</td>
+                    <td>Version</td>
+                </thead>
+                {% for pkg in installed_packages%}
+                <tr>
+                    <td>{{pkg[0]}}</td><td>{{pkg[1]}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+
 
 {% endblock %}
 
