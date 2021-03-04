@@ -99,10 +99,24 @@ def show_users():
         if dform.remove.data:
             # get a list of selected items
             selected_users = request.form.getlist("whitelistusers")
+            if dform.group.data != 0:
+                selected_group = WhitelistGroup.query.get(dform.group.data)
+                to_remove_complete = False
+            else:
+                to_remove_complete = True
             for userid in selected_users:
-                 user = WhitelistUser.query.get(int(userid))
-                #db.session.delete(user)
-            #db.session.commit()
+                to_remove = to_remove_complete
+                user = WhitelistUser.query.get(int(userid))
+                if not to_remove:
+                    user.roles.remove(selected_group)
+                    if not user.roles:
+                        to_remove = True
+
+                if to_remove:
+                    db.session.delete(user)
+                #print(user)
+                #print(to_remove)
+            db.session.commit()
             return redirect(url_for('main.show_users'))
 
         # must be the group select button
@@ -151,7 +165,7 @@ def show_users():
     usergroups = WhiteListUserGroups.query.filter(WhiteListUserGroups.group_id.in_(
         groupids)).paginate(page, pagination.per_page, error_out=False).items
     usergroupsids = [i.user_id for i in usergroups]
-    print(usergroupsids)
+    #print(usergroupsids)
     users = WhitelistUser.query.filter(WhitelistUser.id.in_(usergroupsids))
 
 
